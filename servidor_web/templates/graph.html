@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highstock Example</title>
+		<script src="{{ url_for('static', filename='jquery-1.8.3.min.js') }}"></script>
+		<script type="text/javascript">
+			var data1=[], data2=[], date = [],time = [],time2 = [], labels = [], temperature=[], humidity=[], timestamp=[];
+			$(function () {
+				$.getJSON('http://192.168.43.95:8181/data.json', function (data) {
+					console.log(data)
+					data.forEach(singleResult);
+					function singleResult(item, index) {
+						humidity.push(item.hum);
+						temperature.push(item.temp);
+						date.push(item.currentdate);
+						time.push(item.currentime);
+						timestamp.push(item.timestamp);
+						labels.push(item.timestamp);
+						time2.push(new Date(item.timestamp).toLocaleString());
+						//data1.push([(parseFloat(item.timestamp)*parseFloat(1000)), item.temp])
+						//data1.push([(new Date(item.currentdate + ' ' + item.currentime).getTime()), parseFloat(item.temp)*parseFloat(1.05)])
+						data1.push([parseFloat(new Date(item.timestamp).getTime()-parseFloat(1000*3600*22)), item.temp])
+						data2.push([parseFloat(new Date(item.timestamp).getTime()-parseFloat(1000*3600*22)), item.hum])
+						}
+					console.log(temperature);
+					console.log(humidity);
+					console.log(date);
+					console.log(time);
+					console.log(timestamp);
+					console.log(data1)
+					console.log(data2)
+
+					$('#container').highcharts('StockChart', {
+						chart: {
+							zoomType: 'x'
+						},
+						rangeSelector : {
+							selected : 1
+						},
+						title : {
+							text : 'VICO\'s'
+						},
+						xAxis: {
+							type: 'datetime'
+						},
+						series: [{
+							name: 'Temperature',
+							data: data1
+						},
+						{
+							name: 'Hum',
+							data: data2
+						}
+						]
+					});
+					
+					});
+				// Create the chart
+				/*
+					$('#container').highcharts('StockChart', {
+						chart: {
+							type: 'arearange',
+							zoomType: 'x'
+						},
+
+						xAxis: {
+							type: 'datetime'
+						},
+
+						series: [{
+							name: 'Temperatures',
+							data: data1
+						}]
+					});
+					
+					
+					Highcharts.chart('container', {
+							chart: {
+								zoomType: 'x'
+							},
+
+							xAxis: {
+								type: 'datetime'
+							},
+
+							series: [{
+								name: 'Temperatures',
+								data: data1
+							}]
+
+						});
+						
+					*/
+					// Create the chart
+						
+			});
+
+		</script>
+	</head>
+	<body>
+		<script src="{{ url_for('static', filename='highstock.js') }}"></script>
+		<script src="{{ url_for('static', filename='highcharts-more.js') }}"></script>
+		<script src="{{ url_for('static', filename='exporting.js') }}"></script>
+		<!--- <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div> -->
+		<div id="container" style="min-width: 310px; max-width: 800px; height: 400px; margin: 0 auto"></div>
+		
+	</body>
+</html>
